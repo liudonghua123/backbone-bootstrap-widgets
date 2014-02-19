@@ -32,6 +32,7 @@
     },
     defaults: {
       title: "<h3>Info</h3>",
+      backdrop: true,
       body: "",
       buttons: [{
         className: "btn-primary",
@@ -65,11 +66,12 @@
       });
 
       this.$el.modal({
-        keyboard: false
+        keyboard: false,
+        backdrop: this.backdrop
       });
 
       this.$header.find("a.close").click(view.close);
-      $('.modal-backdrop').off().click(view.close);
+      /*$('.modal-backdrop').off().click(view.close);*/
 
       this.postRender();
 

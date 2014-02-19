@@ -81,6 +81,7 @@ events: {
                 <li><strong>close</strong>: Optional. Boolean indicating whether to close the dialog after the button is pressed. Defaults to false.</li>
               </ul>
             </li>
+            <li><strong>backdrop</strong>: Optional. Specify if backdrop is existing. backdrop option can be boolean or 'static'. Defaults true. 'static' option avoid closing the modal on the click on the backdrop.</li>
           </ul>
         </div>
       </div>
@@ -90,6 +91,8 @@ events: {
           <button id="btn-1" class="btn btn-primary">Basic modal dialog</button>
           &nbsp;
           <button id="btn-2" class="btn btn-primary">Subclassed modal dialog</button>
+          &nbsp;
+          <button id="btn-3" class="btn btn-primary">Static backdrop</button>
         </div>
       </div>
       <div class="row">
@@ -140,6 +143,18 @@ var MyModal = Backbone.ModalView.extend({
 $("#btn-2").click(function(e) {
   new MyModal().render();
 });
+
+// Modal with static backdrop
+// Work with Bootstrap 2.3 and 3
+$("#btn-3").click(function(e) {
+  var modal = new Backbone.ModalView({
+    title: "Static backdrop",
+    body: "Hello World!",
+    backdrop: 'static'
+  });
+  modal.render();
+});
+
 </pre>
         </div>
       </div>

@@ -47,6 +47,15 @@ $(document).ready(function() {
   $("#btn-2").click(function(e) {
     new MyModal().render();
   });
+
+  $("#btn-3").click(function(e) {
+  var modal = new Backbone.ModalView({
+    title: "<h3>Static backdrop</h3>",
+    body: "You can't close the modal on clicking on the backdrop",
+    backdrop: 'static'
+  });
+  modal.render();
+});
   
 
   // BackBone.FormView Example
