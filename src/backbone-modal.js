@@ -72,6 +72,10 @@
 
       this.$header.find("a.close").click(view.close);
 
+      if(this.backdrop === true) {
+        $('.modal-backdrop').off().click(view.close);
+      }
+      
       this.postRender();
 
       return this;
