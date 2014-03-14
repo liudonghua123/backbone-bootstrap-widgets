@@ -16,6 +16,7 @@
       placeholder: "",
       className: "", // Form group class
       control: undefined, // input, select, uneditableInput or spacer
+      type: "text", // input type, defaults to text
       value: undefined, // Do not pass in - will be fetched from model
       options: undefined, // If control is select, list of options as {label:<label>, value:<value>}
       labelClassName: "col-sm-4", // Control label class
@@ -29,7 +30,7 @@
         '<div class="form-group <%=className%>">',
         '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
         '  <div class="<%=controlsClassName%>">',
-        '    <input type="text" class="form-control" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" placeholder="<%=placeholder%>" />',
+        '    <input type="<%=type%>" class="form-control" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" placeholder="<%=placeholder%>" />',
         '  </div>',
         '</div>'
       ].join("\n")),
@@ -78,7 +79,7 @@
         if (!_.isEmpty(record.name))
           data.value = record.nested ? value[record.nested] : value;
 
-        $el = $(view.templates[record.control](data)).appendTo(view.$el);
+        $(view.templates[record.control](data)).appendTo(view.$el);
       });
 
       // Transfer DOM changes to the model
@@ -112,7 +113,7 @@
         '<div class="control-group <%=className%>">',
         '  <label class="control-label"><%=label%></label>',
         '  <div class="controls">',
-        '    <input type="text" class="input-<%=inputSize%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" placeholder="<%=placeholder%>" />',
+        '    <input type="<%=type%>" class="input-<%=inputSize%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" placeholder="<%=placeholder%>" />',
         '  </div>',
         '</div>'
       ].join("\n")),
