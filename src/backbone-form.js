@@ -9,7 +9,7 @@
 (function(){
 
   Backbone.FormView = Backbone.View.extend({
-      field: {
+    field: {
       name: "", // Name of the model attribute
       nested: "", // If model attribute is an object, nested attribute to display (and update)
       label: "",
@@ -17,10 +17,12 @@
       className: "", // Form group class
       control: undefined, // input, select, uneditableInput or spacer
       type: "text", // input type, defaults to text
+      disabled: false, // Set to true to disable the control
       value: undefined, // Do not pass in - will be fetched from model
-      options: undefined, // If control is select, list of options as {label:<label>, value:<value>}
+      options: undefined, // If control is select or radioInput, list of options as {label:<label>, value:<value>}
       labelClassName: "col-sm-4", // Control label class
-      controlsClassName: "col-sm-8" // Form controls class
+      controlsClassName: "col-sm-8", // Form controls class,
+      controlClassName: "" // Control (input) class
     },
     schema: undefined,
     tagName: "form",
@@ -30,7 +32,7 @@
         '<div class="form-group <%=className%>">',
         '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
         '  <div class="<%=controlsClassName%>">',
-        '    <input type="<%=type%>" class="form-control" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" placeholder="<%=placeholder%>" />',
+        '    <input type="<%=type%>" class="form-control <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" placeholder="<%=placeholder%>" />',
         '  </div>',
         '</div>'
       ].join("\n")),
@@ -38,7 +40,7 @@
         '<div class="form-group <%=className%>">',
         '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
         '  <div class="<%=controlsClassName%>">',
-        '    <span class="form-control uneditable-input"><%=value%></span>',
+        '    <span class="form-control uneditable-input <%=controlClassName%>"><%=value%></span>',
         '  </div>',
         '</div>'
       ].join("\n")),
@@ -52,7 +54,7 @@
         '<div class="form-group <%=className%>">',
         '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
         '  <div class="<%=controlsClassName%>">',
-        '    <select class="form-control" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" placeholder="<%=placeholder%>">',
+        '    <select class="form-control <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" placeholder="<%=placeholder%>" >',
         '      <% for (var i=0; i < options.length; i++) { %>',
         '        <% var option = options[i]; %>',
         '        <option value="<%=option.value%>" <%=option.value == value ? "selected=\'selected\'" : ""%>><%=option.label%></option>',
@@ -61,15 +63,34 @@
         '  </div>',
         '</div>'
       ].join("\n")),
+      radioInput: _.template([
+        '<div class="form-group <%=className%>">',
+        '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
+        '  <div class="checkbox <%=controlsClassName%>">',
+        '    <% for (var i=0; i < options.length; i++) { %>',
+        '      <% var option = options[i]; %>',
+        '      <label class="checkbox-inline">',
+        '        <input type="radio" class="<%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=option.value%>" /> <%=option.label%>',
+        '      </label>',
+        '    <% } %>',
+        '  </div>',
+        '</div>'
+      ].join("\n"))
     },
     initialize: function(options) {
       Backbone.View.prototype.initialize.apply(this, arguments);
       _.defaults(this, options || {});
       if (options.field) _.extend(this.field, options.field);
+
+      // Ensure required 'options' was passed for select and radioInput controls
+      _.each(this.schema, function(record) {
+        if ((record.control == 'select' || record.control == 'radioInput') && !record.options)
+          throw new Error("Missing options for control " + record.control);
+      });
     },
     render: function() {
       var view = this,
-        model = this.model;
+          model = this.model;
 
       // Render form elements
       _.each(this.schema, function(record) {
@@ -79,16 +100,22 @@
         if (!_.isEmpty(record.name))
           data.value = record.nested ? value[record.nested] : value;
 
-        $(view.templates[record.control](data)).appendTo(view.$el);
+        record.$el = $(view.templates[record.control](data)).appendTo(view.$el);
+
+        if (record.control == "radioInput")
+          record.$el.find("input[value=" + value + "]").attr("checked", "checked");
+
+        if (record.disabled)
+          record.$el.find("input, select").attr("disabled", "disabled");
       });
 
       // Transfer DOM changes to the model
-      this.$el.find('input, select').off("change").on("change", function(e) {
+      this.$el.find("input, select").off("change").on("change", function(e) {
         var $el = $(this),
-          name = $el.attr("name"),
-          nested = $el.attr("data-nested"),
-          value = $el.val(),
-          changes = {};
+            name = $el.attr("name"),
+            nested = $el.attr("data-nested"),
+            value = $el.val(),
+            changes = {};
         if (_.isEmpty(nested)) {
           changes[name] = value;
         } else {
@@ -111,36 +138,50 @@
     Backbone.FormView.prototype.templates = {
       input: _.template([
         '<div class="control-group <%=className%>">',
-        '  <label class="control-label"><%=label%></label>',
-        '  <div class="controls">',
-        '    <input type="<%=type%>" class="input-<%=inputSize%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" placeholder="<%=placeholder%>" />',
+        '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
+        '  <div class="controls <%=controlsClassName%>">',
+        '    <input type="<%=type%>" class="input-<%=inputSize%> <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" placeholder="<%=placeholder%>" />',
         '  </div>',
         '</div>'
       ].join("\n")),
       uneditableInput: _.template([
         '<div class="control-group <%=className%>">',
-        '  <label class="control-label"><%=label%></label>',
-        '  <div class="controls">',
-        '    <span class="uneditable-input input-<%=inputSize%>"><%=value%></span>',
+        '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
+        '  <div class="controls <%=controlsClassName%>">',
+        '    <span class="uneditable-input input-<%=inputSize%> <%=controlClassName%>"><%=value%></span>',
         '  </div>',
         '</div>'
       ].join("\n")),
       spacer: _.template([
         '<div class="control-group <%=className%>">',
-        '  <label class="control-label">&nbsp;</label>',
-        '  <div class="controls"></div>',
+        '  <label class="control-label <%=labelClassName%>">&nbsp;</label>',
+        '  <div class="controls <%=controlsClassName%>"></div>',
         '</div>'
       ].join("\n")),
       select: _.template([
         '<div class="control-group <%=className%>">',
-        '  <label class="control-label"><%=label%></label>',
-        '  <div class="controls">',
-        '    <select class="input-<%=inputSize%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" placeholder="<%=placeholder%>">',
+        '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
+        '  <div class="controls <%=controlsClassName%>">',
+        '    <select class="input-<%=inputSize%> <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" placeholder="<%=placeholder%>">',
         '      <% for (var i=0; i < options.length; i++) { %>',
         '        <% var option = options[i]; %>',
         '        <option value="<%=option.value%>" <%=option.value == value ? "selected=\'selected\'" : ""%>><%=option.label%></option>',
         '      <% } %>',
         '    </select>',
+        '  </div>',
+        '</div>'
+      ].join("\n")),
+      radioInput: _.template([
+        '<div class="control-group <%=className%>">',
+        '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
+        '  <div class="controls <%=controlsClassName%>">',
+        '    <% for (var i=0; i < options.length; i++) { %>',
+        '      <% var option = options[i]; %>',
+        '      <label class="radio inline">',
+        '        <input type="radio" class="form-control <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=option.value%>" placeholder="<%=placeholder%>" />',
+        '        <%=option.label%>',
+        '      </label>',
+        '    <% } %>',
         '  </div>',
         '</div>'
       ].join("\n"))

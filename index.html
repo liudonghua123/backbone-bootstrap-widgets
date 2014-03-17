@@ -35,8 +35,8 @@
       </div>
       <div class="collapse navbar-collapse" id="navbar-collapse">
         <ul class="nav navbar-nav">
-          <li><a href="#ModalView">ModalView</a></li>
           <li><a href="#FormView">FormView</a></li>
+          <li><a href="#ModalView">ModalView</a></li>
         </ul>
       </div>
     </header>
@@ -52,6 +52,215 @@
           </ul>
         </div>
       </div>
+
+      <!-- Backbone Form View -->
+      <div class="row">
+        <div class="col-md-12">
+          <h1 id="FormView">Backbone.FormView</h1>
+          <p>
+            A FormView is a Backbone View which shows a form to edit the bound Backbone Model.
+            Changes made by the user are directly applied back to the Backbone Model.
+            FormView even supports nested objects.
+          </p>
+          <p>
+            The form markup is that of <a href="http://getbootstrap.com/css/#forms" target="_blank">Bootstrap form</a>.
+            The form uses the horizontal layout (class <code>form-horizontal</code>).
+            Each model attribute is represented by a <code>control-group</code> DIV.
+            Control types currently supported are text INPUT and SELECT.
+          </p>
+          <p>
+            In addition to Backbone View options, FormView takes these extra options:
+            <ul>
+              <li><strong>schema</strong>: Schema defining which attributes to edit, and what controls to use. See below.</li>
+              <li><strong>field</strong>: Optional. If set, will override default field options (see below).</li>
+            </ul>
+          </p>
+          <p>
+            Option <code>schema</code> defines which model attributes will be edited. The schema is a list of field objects.
+            A field object consists of:
+            <ul>
+              <li><strong>name</strong>: Model attribute to edit.</li>
+              <li><strong>nested</strong>: Optional. If the attribute is itslef an object, nested attribute name.</li>
+              <li><strong>label</strong>: Label of field.</li>
+              <li>
+                <strong>control</strong>: Type of input control. Supported controls are:
+                <ul>
+                  <li><strong>input</strong>: Text INPUT.</li>
+                  <li><strong>uneditableInput</strong>: An uneditable input.</li>
+                  <li><strong>select</strong>: SELECT. Set <strong>options</strong> to specific OPTION elements.</li>
+                  <li><strong>radioInput</strong>: INPUT[TYPE=RADIO]. Set <strong>options</strong> to specific input elements.</li>
+                  <li><strong>spacer</strong>: An empty space.</li>
+                </ul>
+              </li>
+              <li><strong>type</strong>: Optional. Input type. Defaults to <code>text</code>.</li>
+              <li><strong>disabled</strong>: Optional. Set to true to disabled the input or select.</li>
+              <li><strong>options</strong>: Optional. For controls <strong>select</strong> and <strong>radioInput</strong>, list of option objects in the form: <code>{label:&lt;label&gt;, value:&lt;value&gt;}</code>.</li>
+              <li><strong>placeholder</strong>: Optional. Placeholder for an input control.</li>
+              <li><strong>className</strong>: Optional. Class to set on the <code>control-group</code> DIV.</li>
+              <li><strong>labelClassName</strong>: Optional. Class to control the width of labels. Defaults to <code>col-sm-4</code>.</li>
+              <li><strong>controlsClassName</strong>: Optional. Class to control the width of form controls. Defaults to <code>col-sm-8</code>.</li>
+              <li><strong>controlClassName</strong>: Optional. Class to add to the input or select element.</li>
+            </ul>
+          </p>
+          <h2>Size of form</h2>
+          <p>
+            Use Bootstrap column classes to control the size of the form labels and controls.
+            By default labels use <code>col-sm-4</code> and controls <code>col-sm-8</code>.
+            You can override this when you define the schma set setting <code>labelClassName</code> and <code>controlsClassName</code>.
+          </p>
+          <p>
+            You can also set these globally by extending the default field definition. For example:
+<pre>
+var form = new Backbone.FormView({
+  field: {
+    labelClassName: "col-sm-2",
+    controlsClassName: "col-sm-4"
+  },
+  ...
+})
+</pre>
+          </p>
+          <h2>Example</h2>
+          <p>Form to edit a person. The address is a nested object. Change to see the Backbone model updated (right).</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <form id="form" class="form-horizontal"></form>
+        </div>
+        <div class="col-md-6">
+          <pre id="object"></pre>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Code</h2>
+<pre>
+var person = {
+  id: 101,
+  salutation: "Mr",
+  firstName: "Andre",
+  lastName: "Jones",
+  address: {
+    address1: "1751 rue Richardson",
+    address2: "Suite 3.105",
+    city: "Montréal",
+    postalCode: "H3K 1G6",
+    province: "QC"
+  }
+};
+var person = new Backbone.Model(person);
+var form = new Backbone.FormView({
+  el: "#form",
+  model: person,
+  schema: [
+  {name: "id", label: "Id", control: "uneditableInput"},
+  {name: "firstName", label: "First Name", control: "input"},
+  {name: "lastName", label: "Last Name", control: "input"},
+  {
+    name: "salutation",
+    label: "Salutation",
+    control: "radioInput",
+    options: [
+      {label: "Mr.", value: "Mr"},
+      {label: "Mrs.", value: "Mrs"},
+      {label: "Mme.", value: "Mme"}
+    ]
+  },
+  {control: "spacer"},
+  {name: "address", nested: "address1", label: "Address1", control: "input"},
+  {name: "address", nested: "address2", label: "Address2", control: "input"},
+  {name: "address", nested: "city", label: "City", control: "input"},
+  {name: "address", nested: "postalCode", label: "Postal Code", control: "input"},
+  {
+    name: "address",
+    nested: "province",
+    label: "Province",
+    control: "select",
+    options: [
+      {label: "Alberta", value: "AB"},
+      {label: "British Columbia", value: "BC"},
+      {label: "Manitoba", value: "MB"},
+      {label: "New Brunswick", value: "NB"},
+      {label: "Newfoundland and Labrador", value: "NL"},
+      {label: "Northwest Territories", value: "NT"},
+      {label: "Nova Scotia", value: "NS"},
+      {label: "Nunavut", value: "NU"},
+      {label: "Ontario", value: "ON"},
+      {label: "Prince Edward Island", value: "PE"},
+      {label: "Québec", value: "QC"},
+      {label: "Saskatchewan", value: "SK"},
+      {label: "Yukon", value: "YT"}
+    ]
+  }]
+});
+form.render();
+
+function updateObject() {
+  $("#object").text(JSON.stringify(person.toJSON(), null, 2));
+}
+person.on("change", updateObject);
+updateObject();
+</pre>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Bootstrap 2.3</h2>
+          <p>
+            Backbone FormView is built for Bootstrap 3.
+            To use Backbone FormView with Bootstrap 2.3, you must modify the HTML markups.
+            In addition, we declare a new field option <code>inputSize</code> to control the size of controls.
+            It takes possible values <code>min</code>, <code>small</code>, <code>medium</code>, <code>large</code>, <code>xlarge</code> or <code>xxlarge</code>. Defaults to <code>xlarge</code>.
+            See <a href="http://getbootstrap.com/2.3.2/base-css.html#forms">Bootstrap 2.3 forms</a> for more information.
+            Use this code.
+          </p>
+<pre>
+Backbone.FormView.prototype.templates = {
+  input: _.template([
+    '&lt;div class="control-group &lt;%=className%&gt;"&gt;',
+    '  &lt;label class="control-label"&gt;&lt;%=label%&gt;&lt;/label&gt;',
+    '  &lt;div class="controls"&gt;',
+    '    &lt;input type="text" class="input-&lt;%=inputSize%&gt;" name="&lt;%=name%&gt;" data-nested="&lt;%=nested%&gt;" value="&lt;%=value%&gt;" placeholder="&lt;%=placeholder%&gt;" /&gt;',
+    '  &lt;/div&gt;',
+    '&lt;/div&gt;'
+  ].join("\n")),
+  uneditableInput: _.template([
+    '&lt;div class="control-group &lt;%=className%&gt;"&gt;',
+    '  &lt;label class="control-label"&gt;&lt;%=label%&gt;&lt;/label&gt;',
+    '  &lt;div class="controls"&gt;',
+    '    &lt;span class="uneditable-input input-&lt;%=inputSize%&gt;"&gt;&lt;%=value%&gt;&lt;/span&gt;',
+    '  &lt;/div&gt;',
+    '&lt;/div&gt;'
+  ].join("\n")),
+  spacer: _.template([
+    '&lt;div class="control-group &lt;%=className%&gt;"&gt;',
+    '  &lt;label class="control-label"&gt;&nbsp;&lt;/label&gt;',
+    '  &lt;div class="controls"&gt;&lt;/div&gt;',
+    '&lt;/div&gt;'
+  ].join("\n")),
+  select: _.template([
+    '&lt;div class="control-group &lt;%=className%&gt;"&gt;',
+    '  &lt;label class="control-label"&gt;&lt;%=label%&gt;&lt;/label&gt;',
+    '  &lt;div class="controls"&gt;',
+    '    &lt;select type="text" class="input-&lt;%=inputSize%&gt;" name="&lt;%=name%&gt;" data-nested="&lt;%=nested%&gt;" value="&lt;%=value%&gt;" placeholder="&lt;%=placeholder%&gt;"&gt;',
+    '      &lt;% for (var i=0; i &lt; options.length; i++) { %&gt;',
+    '        &lt;% var option = options[i]; %&gt;',
+    '        &lt;option value="&lt;%=option.value%&gt;" &lt;%=option.value == value ? "selected=\'selected\'" : ""%&gt;&gt;&lt;%=option.label%&gt;&lt;/option&gt;',
+    '      &lt;% } %&gt;',
+    '    &lt;/select&gt;',
+    '  &lt;/div&gt;',
+    '&lt;/div&gt;'
+  ].join("\n"))
+};
+Backbone.FormView.prototype.field.inputSize = "xlarge";
+</pre>
+        </div>
+      </div>
+      <br/>
+
+
+      <!-- Backbone Form View -->
       <div class="row">
         <div class="col-md-12">
           <h1 id="ModalView">Backbone.ModalView</h1>
@@ -182,195 +391,6 @@ Backbone.ModalView.prototype.className = "modal hide backbone-modal";
       </div>
       <br/>
 
-      <div class="row">
-        <div class="col-md-12">
-          <h1 id="FormView">Backbone.FormView</h1>
-          <p>
-            A FormView is a Backbone View which shows a form to edit the bound Backbone Model.
-            Changes made by the user are directly applied back to the Backbone Model.
-            FormView even supports nested objects.
-          </p>
-          <p>
-            The form markup is that of <a href="http://getbootstrap.com/css/#forms" target="_blank">Bootstrap form</a>.
-            The form uses the horizontal layout (class <code>form-horizontal</code>).
-            Each model attribute is represented by a <code>control-group</code> DIV.
-            Control types currently supported are text INPUT and SELECT.
-          </p>
-          <p>
-            In addition to Backbone View options, FormView takes these extra options:
-            <ul>
-              <li><strong>schema</strong>: Schema defining which attributes to edit, and what controls to use. See below.</li>
-              <li><strong>field</strong>: Optional. If set, will override default field options (see below).</li>
-            </ul>
-          </p>
-          <p>
-            Option <code>schema</code> defines which model attributes will be edited. The schema is a list of field objects.
-            A field object consists of:
-            <ul>
-              <li><strong>name</strong>: Model attribute to edit.</li>
-              <li><strong>nested</strong>: Optional. If the attribute is itslef an object, nested attribute name.</li>
-              <li><strong>label</strong>: Label of field.</li>
-              <li>
-                <strong>control</strong>: Type of input control. Supported controls are:
-                <ul>
-                  <li><strong>input</strong>: Text INPUT.</li>
-                  <li><strong>uneditableInput</strong>: An uneditable input.</li>
-                  <li><strong>select</strong>: SELECT. Set <strong>options</strong> to specific OPTION elements.</li>
-                  <li><strong>spacer</strong>: An empty space.</li>
-                </ul>
-              </li>
-              <li><strong>options</strong>: Optional. For control <strong>select</strong>, list of option objects in the form: <code>{label:&lt;label&gt;, value:&lt;value&gt;}</code>.</li>
-              <li><strong>placeholder</strong>: Optional. Placeholder for an input control.</li>
-              <li><strong>className</strong>: Optional. Class to set on the <code>control-group</code> DIV.</li>
-              <li><strong>labelClassName</strong>: Optional. Class to control the width of labels. Defaults to <code>col-sm-4</code>.</li>
-              <li><strong>controlsClassName</strong>: Optional. Class to control the width of form controls. Defaults to <code>col-sm-8</code>.</li>
-            </ul>
-          </p>
-          <h2>Size of form</h2>
-          <p>
-            Use Bootstrap column classes to control the size of the form labels and controls.
-            By default labels use <code>col-sm-4</code> and controls <code>col-sm-8</code>.
-            You can override this when you define the schma set setting <code>labelClassName</code> and <code>controlsClassName</code>.
-          </p>
-          <p>
-            You can also set these globally by extending the default field definition. For example:
-<pre>
-var form = new Backbone.FormView({
-  field: {
-    labelClassName: "col-sm-2",
-    controlsClassName: "col-sm-4"
-  },
-  ...
-})
-</pre>
-          </p>
-          <h2>Example</h2>
-          <p>Form to edit a person. The address is a nested object. Change to see the Backbone model updated (right).</p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-6">
-          <form id="form" class="form-horizontal"></form>
-        </div>
-        <div class="col-md-6">
-          <pre id="object"></pre>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <h2>Code</h2>
-<pre>
-var person = {
-  id: 101,
-  firstName: "Andre",
-  lastName: "Jones",
-  address: {
-    address1: "1751 rue Richardson",
-    address2: "Suite 3.105",
-    city: "Montréal",
-    postalCode: "H3K 1G6",
-    province: "QC"
-  }
-};
-var person = new Backbone.Model(person);
-var form = new Backbone.FormView({
-  el: "#form",
-  model: person,
-  schema: [
-  {name: "id", label: "Id", control: "uneditableInput"},
-  {name: "firstName", label: "First Name", control: "input"},
-  {name: "lastName", label: "Last Name", control: "input"},
-  {control: "spacer"},
-  {name: "address", nested: "address1", label: "Address1", control: "input"},
-  {name: "address", nested: "address2", label: "Address2", control: "input"},
-  {name: "address", nested: "city", label: "City", control: "input"},
-  {name: "address", nested: "postalCode", label: "Postal Code", control: "input"},
-  {
-    name: "address",
-    nested: "province",
-    label: "Province",
-    control: "select",
-    options: [
-      {label: "Alberta", value: "AB"},
-      {label: "British Columbia", value: "BC"},
-      {label: "Manitoba", value: "MB"},
-      {label: "New Brunswick", value: "NB"},
-      {label: "Newfoundland and Labrador", value: "NL"},
-      {label: "Northwest Territories", value: "NT"},
-      {label: "Nova Scotia", value: "NS"},
-      {label: "Nunavut", value: "NU"},
-      {label: "Ontario", value: "ON"},
-      {label: "Prince Edward Island", value: "PE"},
-      {label: "Québec", value: "QC"},
-      {label: "Saskatchewan", value: "SK"},
-      {label: "Yukon", value: "YT"}
-    ]
-  }]
-});
-form.render();
-
-function updateObject() {
-  $("#object").text(JSON.stringify(person.toJSON(), null, 2));
-}
-person.on("change", updateObject);
-updateObject();
-</pre>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <h2>Bootstrap 2.3</h2>
-          <p>
-            Backbone FormView is built for Bootstrap 3.
-            To use Backbone FormView with Bootstrap 2.3, you must modify the HTML markups.
-            In addition, we declare a new field option <code>inputSize</code> to control the size of controls.
-            It takes possible values <code>min</code>, <code>small</code>, <code>medium</code>, <code>large</code>, <code>xlarge</code> or <code>xxlarge</code>. Defaults to <code>xlarge</code>.
-            See <a href="http://getbootstrap.com/2.3.2/base-css.html#forms">Bootstrap 2.3 forms</a> for more information.
-            Use this code.
-          </p>
-<pre>
-Backbone.FormView.prototype.templates = {
-  input: _.template([
-    '&lt;div class="control-group &lt;%=className%&gt;"&gt;',
-    '  &lt;label class="control-label"&gt;&lt;%=label%&gt;&lt;/label&gt;',
-    '  &lt;div class="controls"&gt;',
-    '    &lt;input type="text" class="input-&lt;%=inputSize%&gt;" name="&lt;%=name%&gt;" data-nested="&lt;%=nested%&gt;" value="&lt;%=value%&gt;" placeholder="&lt;%=placeholder%&gt;" /&gt;',
-    '  &lt;/div&gt;',
-    '&lt;/div&gt;'
-  ].join("\n")),
-  uneditableInput: _.template([
-    '&lt;div class="control-group &lt;%=className%&gt;"&gt;',
-    '  &lt;label class="control-label"&gt;&lt;%=label%&gt;&lt;/label&gt;',
-    '  &lt;div class="controls"&gt;',
-    '    &lt;span class="uneditable-input input-&lt;%=inputSize%&gt;"&gt;&lt;%=value%&gt;&lt;/span&gt;',
-    '  &lt;/div&gt;',
-    '&lt;/div&gt;'
-  ].join("\n")),
-  spacer: _.template([
-    '&lt;div class="control-group &lt;%=className%&gt;"&gt;',
-    '  &lt;label class="control-label"&gt;&nbsp;&lt;/label&gt;',
-    '  &lt;div class="controls"&gt;&lt;/div&gt;',
-    '&lt;/div&gt;'
-  ].join("\n")),
-  select: _.template([
-    '&lt;div class="control-group &lt;%=className%&gt;"&gt;',
-    '  &lt;label class="control-label"&gt;&lt;%=label%&gt;&lt;/label&gt;',
-    '  &lt;div class="controls"&gt;',
-    '    &lt;select type="text" class="input-&lt;%=inputSize%&gt;" name="&lt;%=name%&gt;" data-nested="&lt;%=nested%&gt;" value="&lt;%=value%&gt;" placeholder="&lt;%=placeholder%&gt;"&gt;',
-    '      &lt;% for (var i=0; i &lt; options.length; i++) { %&gt;',
-    '        &lt;% var option = options[i]; %&gt;',
-    '        &lt;option value="&lt;%=option.value%&gt;" &lt;%=option.value == value ? "selected=\'selected\'" : ""%&gt;&gt;&lt;%=option.label%&gt;&lt;/option&gt;',
-    '      &lt;% } %&gt;',
-    '    &lt;/select&gt;',
-    '  &lt;/div&gt;',
-    '&lt;/div&gt;'
-  ].join("\n"))
-};
-Backbone.FormView.prototype.field.inputSize = "xlarge";
-</pre>
-        </div>
-      </div>
-      <br/>
     <br/>
 
     <footer class="navbar navbar-default">

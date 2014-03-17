@@ -1,5 +1,74 @@
 $(document).ready(function() {
 
+  // BackBone.FormView Example
+  // Person with nested address
+  var person = {
+    id: 101,
+    salutation: "Mr",
+    firstName: "Andre",
+    lastName: "Jones",
+    address: {
+      address1: "1751 rue Richardson",
+      address2: "Suite 3.105",
+      city: "Montréal",
+      postalCode: "H3K 1G6",
+      province: "QC"
+    }
+  };
+  var person = new Backbone.Model(person);
+  var form = new Backbone.FormView({
+    el: "#form",
+    model: person,
+    schema: [
+    {name: "id", label: "Id", control: "uneditableInput"},
+    {
+      name: "salutation",
+      label: "Salutation",
+      control: "radioInput",
+      options: [
+        {label: "Mr.", value: "Mr"},
+        {label: "Mrs.", value: "Mrs"},
+        {label: "Mme.", value: "Mme"}
+      ]
+    },
+    {name: "firstName", label: "First Name", control: "input"},
+    {name: "lastName", label: "Last Name", control: "input"},
+    {control: "spacer"},
+    {name: "address", nested: "address1", label: "Address1", control: "input"},
+    {name: "address", nested: "address2", label: "Address2", control: "input"},
+    {name: "address", nested: "city", label: "City", control: "input"},
+    {name: "address", nested: "postalCode", label: "Postal Code", control: "input"},
+    {
+      name: "address",
+      nested: "province",
+      label: "Province",
+      control: "select",
+      options: [
+        {label: "Alberta", value: "AB"},
+        {label: "British Columbia", value: "BC"},
+        {label: "Manitoba", value: "MB"},
+        {label: "New Brunswick", value: "NB"},
+        {label: "Newfoundland and Labrador", value: "NL"},
+        {label: "Northwest Territories", value: "NT"},
+        {label: "Nova Scotia", value: "NS"},
+        {label: "Nunavut", value: "NU"},
+        {label: "Ontario", value: "ON"},
+        {label: "Prince Edward Island", value: "PE"},
+        {label: "Québec", value: "QC"},
+        {label: "Saskatchewan", value: "SK"},
+        {label: "Yukon", value: "YT"}
+      ]
+    }]
+  });
+  form.render();
+
+  function updateObject() {
+    $("#object").text(JSON.stringify(person.toJSON(), null, 2));
+  }
+  person.on("change", updateObject);
+  updateObject();
+
+
 
   // Backbone.ModalView Example 1
   // Basic modal dialog
@@ -49,70 +118,12 @@ $(document).ready(function() {
   });
 
   $("#btn-3").click(function(e) {
-  var modal = new Backbone.ModalView({
-    title: "<h3>Static backdrop</h3>",
-    body: "You can't close the modal on clicking on the backdrop",
-    backdrop: 'static'
+    var modal = new Backbone.ModalView({
+      title: "<h3>Static backdrop</h3>",
+      body: "You can't close the modal on clicking on the backdrop",
+      backdrop: 'static'
+    });
+    modal.render();
   });
-  modal.render();
-});
-  
-
-  // BackBone.FormView Example
-  // Person with nested address
-  var person = {
-    id: 101,
-    firstName: "Andre",
-    lastName: "Jones",
-    address: {
-      address1: "1751 rue Richardson",
-      address2: "Suite 3.105",
-      city: "Montréal",
-      postalCode: "H3K 1G6",
-      province: "QC"
-    }
-  };
-  var person = new Backbone.Model(person);
-  var form = new Backbone.FormView({
-    el: "#form",
-    model: person,
-    schema: [
-    {name: "id", label: "Id", control: "uneditableInput"},
-    {name: "firstName", label: "First Name", control: "input"},
-    {name: "lastName", label: "Last Name", control: "input"},
-    {control: "spacer"},
-    {name: "address", nested: "address1", label: "Address1", control: "input"},
-    {name: "address", nested: "address2", label: "Address2", control: "input"},
-    {name: "address", nested: "city", label: "City", control: "input"},
-    {name: "address", nested: "postalCode", label: "Postal Code", control: "input"},
-    {
-      name: "address",
-      nested: "province",
-      label: "Province",
-      control: "select",
-      options: [
-        {label: "Alberta", value: "AB"},
-        {label: "British Columbia", value: "BC"},
-        {label: "Manitoba", value: "MB"},
-        {label: "New Brunswick", value: "NB"},
-        {label: "Newfoundland and Labrador", value: "NL"},
-        {label: "Northwest Territories", value: "NT"},
-        {label: "Nova Scotia", value: "NS"},
-        {label: "Nunavut", value: "NU"},
-        {label: "Ontario", value: "ON"},
-        {label: "Prince Edward Island", value: "PE"},
-        {label: "Québec", value: "QC"},
-        {label: "Saskatchewan", value: "SK"},
-        {label: "Yukon", value: "YT"}
-      ]
-    }]
-  });
-  form.render();
-
-  function updateObject() {
-    $("#object").text(JSON.stringify(person.toJSON(), null, 2));
-  }
-  person.on("change", updateObject);
-  updateObject();
 
 });
