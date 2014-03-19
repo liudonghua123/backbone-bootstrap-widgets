@@ -91,6 +91,8 @@
     render: function() {
       var view = this,
           model = this.model;
+      
+      this.$el.empty();
 
       // Render form elements
       _.each(this.schema, function(record) {
