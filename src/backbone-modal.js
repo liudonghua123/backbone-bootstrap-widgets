@@ -86,6 +86,7 @@
     close: function(e) {
       if (e) e.preventDefault();
       var view = this;
+      this.trigger("close", this);
       setTimeout(function() {
         view.$el.modal("hide");
         view.remove();
