@@ -116,7 +116,7 @@
         var $el = $(this),
             name = $el.attr("name"),
             nested = $el.attr("data-nested"),
-            value = JSON.parse($el.val()),
+            value = $el.is("select") ? JSON.parse($el.val()) : $el.val(),
             changes = {};
         if (_.isEmpty(nested)) {
           changes[name] = value;
