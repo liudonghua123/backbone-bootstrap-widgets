@@ -105,7 +105,7 @@
         record.$el = $(view.templates[record.control](data)).appendTo(view.$el);
 
         if (record.control == "radioInput")
-          record.$el.find("input[value=" + value + "]").attr("checked", "checked");
+          record.$el.find("input[value=" + JSON.stringify(value) + "]").attr("checked", "checked");
 
         if (record.disabled)
           record.$el.find("input, select").attr("disabled", "disabled");
@@ -116,7 +116,7 @@
         var $el = $(this),
             name = $el.attr("name"),
             nested = $el.attr("data-nested"),
-            value = $el.val(),
+            value = JSON.parse($el.val()),
             changes = {};
         if (_.isEmpty(nested)) {
           changes[name] = value;
