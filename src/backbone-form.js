@@ -30,9 +30,9 @@
     templates: {
       input: _.template([
         '<div class="form-group <%=className%>">',
-        '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
+        '  <label class="control-label <%=labelClassName%>"><%-label%></label>',
         '  <div class="<%=controlsClassName%>">',
-        '    <input type="<%=type%>" class="form-control <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" placeholder="<%=placeholder%>" />',
+        '    <input type="<%=type%>" class="form-control <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%-value%>" placeholder="<%-placeholder%>" />',
         '  </div>',
         '</div>'
       ].join("\n")),
@@ -42,7 +42,7 @@
         '  <div class="<%=controlsClassName%>">',
         '    <div class="checkbox">',
         '      <label>',
-        '        <input type="checkbox" class="<%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" /> <%=label%>',
+        '        <input type="checkbox" class="<%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%-value%>" /> <%-label%>',
         '      </label>',
         '    </div>',
         '  </div>',
@@ -50,7 +50,7 @@
       ].join("\n")),
       uneditableInput: _.template([
         '<div class="form-group <%=className%>">',
-        '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
+        '  <label class="control-label <%=labelClassName%>"><%-label%></label>',
         '  <div class="<%=controlsClassName%>">',
         '    <span class="form-control uneditable-input <%=controlClassName%>"><%=value%></span>',
         '  </div>',
@@ -64,12 +64,12 @@
       ].join("\n")),
       select: _.template([
         '<div class="form-group <%=className%>">',
-        '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
+        '  <label class="control-label <%=labelClassName%>"><%-label%></label>',
         '  <div class="<%=controlsClassName%>">',
-        '    <select class="form-control <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" placeholder="<%=placeholder%>" >',
+        '    <select class="form-control <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%-value%>" placeholder="<%-placeholder%>" >',
         '      <% for (var i=0; i < options.length; i++) { %>',
         '        <% var option = options[i]; %>',
-        '        <option value="<%=option.value%>" <%=option.value == value ? "selected=\'selected\'" : ""%>><%=option.label%></option>',
+        '        <option value="<%-option.value%>" <%=option.value == value ? "selected=\'selected\'" : ""%>><%-option.label%></option>',
         '      <% } %>',
         '    </select>',
         '  </div>',
@@ -77,17 +77,25 @@
       ].join("\n")),
       radioInput: _.template([
         '<div class="form-group <%=className%>">',
-        '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
+        '  <label class="control-label <%=labelClassName%>"><%-label%></label>',
         '  <div class="checkbox <%=controlsClassName%>">',
         '    <% for (var i=0; i < options.length; i++) { %>',
         '      <% var option = options[i]; %>',
         '      <label class="checkbox-inline">',
-        '        <input type="radio" class="<%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=option.value%>" /> <%=option.label%>',
+        '        <input type="radio" class="<%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=option.value%>" /> <%-option.label%>',
         '      </label>',
         '    <% } %>',
         '  </div>',
         '</div>'
-      ].join("\n"))
+      ].join("\n")),
+      textarea: _.template([
+        '<div class="form-group <%=className%>">',
+        '  <label class="control-label <%=labelClassName%>"><%-label%></label>',
+        '  <div class="<%=controlsClassName%>">',
+        '    <textarea class="form-control <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" placeholder="<%-placeholder%>"><%-value%></textarea>',
+        '  </div>',
+        '</div>'
+      ].join("\n")),
     },
     initialize: function(options) {
       Backbone.View.prototype.initialize.apply(this, arguments);
@@ -124,11 +132,11 @@
           record.$el.find("input").attr("checked", "checked");
 
         if (record.disabled)
-          record.$el.find("input, select").attr("disabled", "disabled");
+          record.$el.find("input, select, textarea").attr("disabled", "disabled");
       });
 
       // Transfer DOM changes to the model
-      this.$el.find("input, select").off("change").on("change", function(e) {
+      this.$el.find("input, select, textarea").off("change").on("change", function(e) {
         var $el = $(this),
             name = $el.attr("name"),
             nested = $el.attr("data-nested"),
@@ -158,9 +166,9 @@
     Backbone.FormView.prototype.templates = {
       input: _.template([
         '<div class="control-group <%=className%>">',
-        '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
+        '  <label class="control-label <%=labelClassName%>"><%-label%></label>',
         '  <div class="controls <%=controlsClassName%>">',
-        '    <input type="<%=type%>" class="input-<%=inputSize%> <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" placeholder="<%=placeholder%>" />',
+        '    <input type="<%=type%>" class="input-<%=inputSize%> <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%-value%>" placeholder="<%-placeholder%>" />',
         '  </div>',
         '</div>'
       ].join("\n")),
@@ -169,16 +177,16 @@
         '  <label class="control-label <%=labelClassName%>"></label>',
         '  <div class="controls <%=controlsClassName%>">',
         '    <label class="checkbox inline">',
-        '      <input type="checkbox" class="input-<%=inputSize%> <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" /> <%=label%>',
+        '      <input type="checkbox" class="input-<%=inputSize%> <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%-value%>" /> <%-label%>',
         '    </label>',
         '  </div>',
         '</div>'
       ].join("\n")),
       uneditableInput: _.template([
         '<div class="control-group <%=className%>">',
-        '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
+        '  <label class="control-label <%=labelClassName%>"><%-label%></label>',
         '  <div class="controls <%=controlsClassName%>">',
-        '    <span class="uneditable-input input-<%=inputSize%> <%=controlClassName%>"><%=value%></span>',
+        '    <span class="uneditable-input input-<%=inputSize%> <%=controlClassName%>"><%-value%></span>',
         '  </div>',
         '</div>'
       ].join("\n")),
@@ -190,12 +198,12 @@
       ].join("\n")),
       select: _.template([
         '<div class="control-group <%=className%>">',
-        '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
+        '  <label class="control-label <%=labelClassName%>"><%-label%></label>',
         '  <div class="controls <%=controlsClassName%>">',
-        '    <select class="input-<%=inputSize%> <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" placeholder="<%=placeholder%>">',
+        '    <select class="input-<%=inputSize%> <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%-value%>" placeholder="<%-placeholder%>">',
         '      <% for (var i=0; i < options.length; i++) { %>',
         '        <% var option = options[i]; %>',
-        '        <option value="<%=option.value%>" <%=option.value == value ? "selected=\'selected\'" : ""%>><%=option.label%></option>',
+        '        <option value="<%-option.value%>" <%=option.value == value ? "selected=\'selected\'" : ""%>><%-option.label%></option>',
         '      <% } %>',
         '    </select>',
         '  </div>',
@@ -203,15 +211,36 @@
       ].join("\n")),
       radioInput: _.template([
         '<div class="control-group <%=className%>">',
-        '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
+        '  <label class="control-label <%=labelClassName%>"><%-label%></label>',
         '  <div class="controls <%=controlsClassName%>">',
         '    <% for (var i=0; i < options.length; i++) { %>',
         '      <% var option = options[i]; %>',
         '      <label class="radio inline">',
-        '        <input type="radio" class="form-control <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=option.value%>" placeholder="<%=placeholder%>" />',
+        '        <input type="radio" class="form-control <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%-option.value%>" placeholder="<%-placeholder%>" />',
         '        <%=option.label%>',
         '      </label>',
         '    <% } %>',
+        '  </div>',
+        '</div>'
+      ].join("\n")),
+      textarea: _.template([
+        '<div class="control-group <%=className%>">',
+        '  <label class="control-label <%=labelClassName%>"><%-label%></label>',
+        '  <div class="controls <%=controlsClassName%>">',
+        '    <textarea class="input-<%=inputSize%> <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" placeholder="<%-placeholder%>"><%-value%></textarea>',
+        '  </div>',
+        '</div>'
+      ].join("\n")),
+      // New control implementing jQuery File Upload
+      fileInput: _.template([
+        '<div class="control-group <%=className%>">',
+        '  <label class="control-label <%=labelClassName%>"><%-label%></label>',
+        '  <div class="controls <%=controlsClassName%>">',
+        '    <div class="file-input btn btnSet3 btn-primary">',
+        '      <i class="fa fa-cloud-upload"></i>&nbsp;',
+        '      <span class="button-text"><%=options.selectFileLabel%></span>',
+        '      <input type="file" class="input-<%=inputSize%> <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%-value%>" />',
+        '    </div>',
         '  </div>',
         '</div>'
       ].join("\n"))

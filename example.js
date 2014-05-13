@@ -14,7 +14,8 @@ $(document).ready(function() {
       city: "Montréal",
       postalCode: "H3K 1G6",
       province: "QC"
-    }
+    },
+    lifeGoal: "To become the best basketball player there is. I want to dunk!"
   };
   var person = new Backbone.Model(person);
   var form = new Backbone.FormView({
@@ -60,7 +61,8 @@ $(document).ready(function() {
         {label: "Saskatchewan", value: "SK"},
         {label: "Yukon", value: "YT"}
       ]
-    }]
+    },
+    {name: "lifeGoal", label: "Life goal", control: "textarea"}]
   });
   form.render();
 

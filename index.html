@@ -91,6 +91,7 @@
                   <li><strong>select</strong>: SELECT. Set <strong>options</strong> to specific OPTION elements.</li>
                   <li><strong>radioInput</strong>: INPUT[TYPE=RADIO]. Set <strong>options</strong> to specific input elements.</li>
                   <li><strong>spacer</strong>: An empty space.</li>
+                  <li><strong>textarea</strong>: TEXTAREA.</li>
                 </ul>
               </li>
               <li><strong>type</strong>: Optional. Input type. Defaults to <code>text</code>.</li>
@@ -195,7 +196,8 @@ var form = new Backbone.FormView({
       {label: "Saskatchewan", value: "SK"},
       {label: "Yukon", value: "YT"}
     ]
-  }]
+  },
+  {name: "lifeGoal", label: "Life goal", control: "textarea"}]
 });
 form.render();
 
