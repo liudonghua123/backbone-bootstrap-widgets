@@ -18,7 +18,7 @@
       control: undefined, // input, select, uneditableInput or spacer
       type: "text", // input type, defaults to text
       disabled: false, // Set to true to disable the control
-      value: undefined, // Do not pass in - will be fetched from model
+      value: undefined, // Default value when model is empty. Optional.
       options: undefined, // If control is select or radioInput, list of options as {label:<label>, value:<value>}
       labelClassName: "col-sm-4", // Control label class
       controlsClassName: "col-sm-8", // Form controls class,
@@ -33,6 +33,18 @@
         '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
         '  <div class="<%=controlsClassName%>">',
         '    <input type="<%=type%>" class="form-control <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" placeholder="<%=placeholder%>" />',
+        '  </div>',
+        '</div>'
+      ].join("\n")),
+      booleanInput: _.template([
+        '<div class="form-group <%=className%>">',
+        '  <label class="control-label <%=labelClassName%>"></label>',
+        '  <div class="<%=controlsClassName%>">',
+        '    <div class="checkbox">',
+        '      <label>',
+        '        <input type="checkbox" class="<%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" /> <%=label%>',
+        '      </label>',
+        '    </div>',
         '  </div>',
         '</div>'
       ].join("\n")),
@@ -90,7 +102,8 @@
     },
     render: function() {
       var view = this,
-          model = this.model;
+          model = this.model,
+          isEmpty = _.isEmpty(model.toJSON());
       
       this.$el.empty();
 
@@ -99,13 +112,16 @@
         var data = _.extend({}, view.field, record),
           value = model.get(record.name);
 
-        if (!_.isEmpty(record.name))
-          data.value = record.nested ? value[record.nested] : value;
+        if (!isEmpty)
+          data.value = record.nested && value ? value[record.nested] : value;
 
         record.$el = $(view.templates[record.control](data)).appendTo(view.$el);
 
         if (record.control == "radioInput")
           record.$el.find("input[value=" + JSON.stringify(value) + "]").attr("checked", "checked");
+
+        if (record.control == "booleanInput" && value)
+          record.$el.find("input").attr("checked", "checked");
 
         if (record.disabled)
           record.$el.find("input, select").attr("disabled", "disabled");
@@ -116,12 +132,14 @@
         var $el = $(this),
             name = $el.attr("name"),
             nested = $el.attr("data-nested"),
-            value = $el.is("select") ? JSON.parse($el.val()) : $el.val(),
+            value = $el.is("select") ? JSON.parse($el.val()) : 
+                    $el.is("input[type=checkbox]") ? $el.is(":checked") : $el.val(),
             changes = {};
+
         if (_.isEmpty(nested)) {
           changes[name] = value;
         } else {
-          changes[name] = _.clone(model.get(name));
+          changes[name] = _.clone(model.get(name)) || {};
           changes[name][nested] = value;
         }
         model.set(changes);
@@ -143,6 +161,16 @@
         '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
         '  <div class="controls <%=controlsClassName%>">',
         '    <input type="<%=type%>" class="input-<%=inputSize%> <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" placeholder="<%=placeholder%>" />',
+        '  </div>',
+        '</div>'
+      ].join("\n")),
+      booleanInput: _.template([
+        '<div class="control-group <%=className%>">',
+        '  <label class="control-label <%=labelClassName%>"></label>',
+        '  <div class="controls <%=controlsClassName%>">',
+        '    <label class="checkbox inline">',
+        '      <input type="checkbox" class="input-<%=inputSize%> <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" /> <%=label%>',
+        '    </label>',
         '  </div>',
         '</div>'
       ].join("\n")),
@@ -186,9 +214,22 @@
         '    <% } %>',
         '  </div>',
         '</div>'
+      ].join("\n")),
+      // New control implementing jQuery File Upload
+      fileInput: _.template([
+        '<div class="control-group <%=className%>">',
+        '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
+        '  <div class="controls <%=controlsClassName%>">',
+        '    <div class="file-input btn btnSet3 btn-primary">',
+        '      <i class="fa fa-cloud-upload"></i>&nbsp;',
+        '      <span class="button-text"><%=options.selectFileLabel%></span>',
+        '      <input type="file" class="input-<%=inputSize%> <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" />',
+        '    </div>',
+        '  </div>',
+        '</div>'
       ].join("\n"))
     };
-    Backbone.FormView.prototype.field.inputSize = "xlarge";
+  Backbone.FormView.prototype.field.inputSize = "xlarge";
 
   */
 

@@ -7,6 +7,7 @@ $(document).ready(function() {
     salutation: "Mr",
     firstName: "Andre",
     lastName: "Jones",
+    adult: true,
     address: {
       address1: "1751 rue Richardson",
       address2: "Suite 3.105",
@@ -33,6 +34,7 @@ $(document).ready(function() {
     },
     {name: "firstName", label: "First Name", control: "input"},
     {name: "lastName", label: "Last Name", control: "input"},
+    {name: "adult", label: "Adult", control: "booleanInput"},
     {control: "spacer"},
     {name: "address", nested: "address1", label: "Address1", control: "input"},
     {name: "address", nested: "address2", label: "Address2", control: "input"},

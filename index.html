@@ -86,6 +86,7 @@
                 <strong>control</strong>: Type of input control. Supported controls are:
                 <ul>
                   <li><strong>input</strong>: Text INPUT.</li>
+                  <li><strong>booleanInput</strong>: Single checkbox INPUT for Boolean fields. When checked, will set model attribute to true, false otherwise.</li>
                   <li><strong>uneditableInput</strong>: An uneditable input.</li>
                   <li><strong>select</strong>: SELECT. Set <strong>options</strong> to specific OPTION elements.</li>
                   <li><strong>radioInput</strong>: INPUT[TYPE=RADIO]. Set <strong>options</strong> to specific input elements.</li>
@@ -141,6 +142,7 @@ var person = {
   salutation: "Mr",
   firstName: "Andre",
   lastName: "Jones",
+  adult: true,
   address: {
     address1: "1751 rue Richardson",
     address2: "Suite 3.105",
@@ -157,6 +159,7 @@ var form = new Backbone.FormView({
   {name: "id", label: "Id", control: "uneditableInput"},
   {name: "firstName", label: "First Name", control: "input"},
   {name: "lastName", label: "Last Name", control: "input"},
+  {name: "adult", label: "Adult", control: "booleanInput"},
   {
     name: "salutation",
     label: "Salutation",
