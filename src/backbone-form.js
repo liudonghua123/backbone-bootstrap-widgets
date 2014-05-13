@@ -214,22 +214,9 @@
         '    <% } %>',
         '  </div>',
         '</div>'
-      ].join("\n")),
-      // New control implementing jQuery File Upload
-      fileInput: _.template([
-        '<div class="control-group <%=className%>">',
-        '  <label class="control-label <%=labelClassName%>"><%=label%></label>',
-        '  <div class="controls <%=controlsClassName%>">',
-        '    <div class="file-input btn btnSet3 btn-primary">',
-        '      <i class="fa fa-cloud-upload"></i>&nbsp;',
-        '      <span class="button-text"><%=options.selectFileLabel%></span>',
-        '      <input type="file" class="input-<%=inputSize%> <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%=value%>" />',
-        '    </div>',
-        '  </div>',
-        '</div>'
       ].join("\n"))
     };
-  Backbone.FormView.prototype.field.inputSize = "xlarge";
+    Backbone.FormView.prototype.field.inputSize = "xlarge";
 
   */
 
