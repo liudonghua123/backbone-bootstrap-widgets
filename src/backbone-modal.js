@@ -94,19 +94,4 @@
     }
   });
 
-  /**
-    Bootstrap 2.3 use requires changes in HTML markup.
-    
-    Backbone.ModalView.prototype.template = _.template([
-      '<div class="modal-header">',
-      '  <a type="button" class="close" aria-hidden="true">&times;</a>',
-      '  <%=title%>',
-      '</div>',
-      '<div class="modal-body"><%=body%></div>',
-      '<div class="modal-footer"></div>'
-    ].join("\n"));
-    Backbone.ModalView.prototype.className = "modal hide backbone-modal";
-
-  */
-
 }).call(this);
