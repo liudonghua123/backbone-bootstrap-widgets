@@ -140,8 +140,7 @@
         var $el = $(this),
             name = $el.attr("name"),
             nested = $el.attr("data-nested"),
-            value = $el.is("select") ? JSON.parse($el.val()) : 
-                    $el.is("input[type=checkbox]") ? $el.is(":checked") : $el.val(),
+            value = $el.is("input[type=checkbox]") ? $el.is(":checked") : $el.val(),
             changes = {};
 
         if (_.isEmpty(nested)) {
