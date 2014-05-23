@@ -130,4 +130,28 @@ $(document).ready(function() {
     modal.render();
   });
 
+  // Backbone.ShiftableCollection Example
+  var ImageGallery = Backbone.ShiftableCollectionView.extend({
+    template: _.template([
+      '<div class="col-md-2 shiftable-collection-item">',
+      '  <img src="<%=image%>" alt="<%=name%>" />',
+      '  <br/>',
+      '  <span><%=name%></span>',
+      '  <a href="#" class="action delete">&times;</a>',
+      '  <a href="#" class="action move-left">&#8592;</a>',
+      '  <a href="#" class="action move-right">&#8594;</a>',
+      '</div>'
+    ].join("\n"))
+  });
+  var images = new Backbone.Collection([
+    {name: "Mario", image: "img/mario.png"},
+    {name: "Luigi", image: "img/luigi.png"},
+    {name: "Princess", image: "img/princess.png"},
+    {name: "Yoshi", image: "img/yoshi.png"}
+  ]);
+  var imageGallery = new ImageGallery({
+    collection: images,
+    el: $("#shiftable-collection-example")
+  }).render();
+
 });

@@ -15,11 +15,18 @@
     
     <script src="src/backbone-form.js" type="text/javascript"></script>
     <script src="src/backbone-modal.js" type="text/javascript"></script>
+
+    <script src="src/backbone-shiftable-collection.js" type="text/javascript"></script>
+    <link href="src/backbone-shiftable-collection.css" rel="stylesheet" type="text/css" charset="utf-8">
+
     <script src="example.js" type="text/javascript"></script>
     
     <style>
       header.navbar-inverse {border-radius: 0;}
       footer.navbar-default {border-radius: 0; margin-bottom: 0;}
+      .shiftable-collection-item {padding: 10px; text-align: center; height: 160px; border: 1px solid #999; margin-right: 10px;}
+      .shiftable-collection-item:hover, .shiftable-collection-item.selected {background-color: #ddd;}
+      .shiftable-collection img {max-width: 100%; max-height: 100px;}
     </style>
   </head>
   <body>
@@ -37,6 +44,7 @@
         <ul class="nav navbar-nav">
           <li><a href="#FormView">FormView</a></li>
           <li><a href="#ModalView">ModalView</a></li>
+          <li><a href="#ShiftableCollectionView">ShiftableCollectionView</a></li>
         </ul>
       </div>
     </header>
@@ -49,6 +57,7 @@
           <ul>
             <li><a href="#FormView">FormView</a> creates a <a href="http://backbonejs.org/#View" target="_blank">Backbone View</a> using <a href="http://getbootstrap.com/css/#forms" target="_blank">Bootstrap form</a> markup and styling. Implements bindings to update the <a href="http://backbonejs.org/#Model" target="_blank">Backbone Model</a> based on DOM changes made by the user.</li>
             <li><a href="#ModalView">ModalView</a> creates a <a href="http://backbonejs.org/#View" target="_blank">Backbone View</a> wrapping a <a href="http://getbootstrap.com/javascript/#modals" target="_blank">Bootstrap modal dialog</a>. You can fill in the moal body in the <code>render</code> function.</li>
+            <li><a href="#ShiftableCollectionView">ShiftableCollectionView</a> creates a <a href="http://backbonejs.org/#View" target="_blank">Backbone View</a> wrapping a <a href="http://backbonejs.org/#Collection" target="_blank">Backbone Collection</a>. Allows you to shift models left and right to reorder, and to remove models.</li>
           </ul>
         </div>
       </div>
@@ -428,6 +437,72 @@ Backbone.ModalView.prototype.className = "modal hide backbone-modal";
       </div>
       <br/>
 
+      <!-- Backbone Shiftable Collection View -->
+      <div class="row">
+        <div class="col-md-12">
+          <h1 id="ShiftableCollectionView">Backbone.ShiftableCollectionView</h1>
+          <p>
+            A ShiftableCollectionView displays a collection of models. Adds buttons to shift models left and right (or top and bottom), and to remove a model. The view consists of a collection element with class <code>shiftable-collection</code>, containing item elements with class <code>shiftable-collection-item</code>. To use, subclass and define your own template see example below).
+          </p>
+          <p>
+            Included are optional styling files (CSS and LESS) to properly position the action buttons. These are:
+          </p>
+          <ul>
+            <li><strong>CSS</strong>: <code>src/backbone-shiftable-collection.css</code></li>
+            <li><strong>LESS</strong>: <code>src/backbone-shiftable-collection.less</code></li>
+          </ul>
+          <h2>Example</h2>
+          <div id="shiftable-collection-example" class="shiftable-collection row"></div>
+          <div class="row">
+            <div class="col-md-6">
+              <h2>Code</h2>
+<pre>
+var ImageGallery = Backbone.ShiftableCollectionView.extend({
+  template: _.template([
+    '&lt;div class="col-md-2 shiftable-collection-item"&gt;',
+    '  &lt;img src="&lt;%=image%&gt;" alt="&lt;%=name%&gt;" /&gt;',
+    '  &lt;br/&gt;',
+    '  &lt;span&gt;&lt;%=name%&gt;&lt;/span&gt;',
+    '  &lt;a href="#" class="action delete"&gt;&times;&lt;/a&gt;',
+    '  &lt;a href="#" class="action move-left"&gt;&#8592;&lt;/a&gt;',
+    '  &lt;a href="#" class="action move-right"&gt;&#8594;&lt;/a&gt;',
+    '&lt;/div&gt;'
+  ].join("\n"))
+});
+var images = new Backbone.Collection([
+  {name: "Mario", image: "img/mario.png"},
+  {name: "Luigi", image: "img/luigi.png"},
+  {name: "Princess", image: "img/princess.png"},
+  {name: "Yoshi", image: "img/yoshi.png"}
+]);
+var imageGallery = new ImageGallery({
+  collection: images,
+  el: $("#shiftable-collection-example")
+}).render();
+</pre>
+            </div>
+            <div class="col-md-6">
+              <h2>CSS</h2>
+<pre>
+.shiftable-collection-item {
+  padding: 10px;
+  text-align: center;
+  height: 160px;
+  border: 1px solid #999;
+  margin-right: 10px;
+}
+.shiftable-collection-item:hover, .shiftable-collection-item.selected {
+  background-color: #ddd;
+}
+.shiftable-collection img {
+  max-width: 100%;
+  max-height: 100px;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+    </div>
     <br/>
 
     <footer class="navbar navbar-default">
