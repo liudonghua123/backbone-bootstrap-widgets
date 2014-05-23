@@ -1,7 +1,7 @@
 Backbone Bootstrap Widgets
 ==========================
 
-Series of widgets implemented as Backbone Views wrapping Bootstrap plugins. Inlcudes a ModalView, wrapping a Bootstrap modal dialog, and FormView, using Bootstrap form arkup and styling for updating Backbone Models.
+Series of widgets implemented as Backbone Views wrapping Bootstrap plugins.
 
 Documentation and examples available here:
 http://amiliaapp.github.io/backbone-bootstrap-widgets/
