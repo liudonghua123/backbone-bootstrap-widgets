@@ -46,6 +46,14 @@
             });
             return this;
         },
+        select: function(model) {
+            var index = this.collection.indexOf(model);
+            if (index < 0 || index >= this.collection.size()) return this;
+            this.$el.find(".shiftable-collection-item")
+                .removeClass("selected")
+                .eq(index).addClass("selected");
+            return this;
+        },
         onClick: function(e) {
             this.$el.find(".shiftable-collection-item").removeClass("selected");
             $(e.currentTarget).addClass("selected");
