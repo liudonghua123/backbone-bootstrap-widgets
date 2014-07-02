@@ -9,6 +9,9 @@
     <script src="3rd/jquery.min.js" type="text/javascript"></script>
     <script src="3rd/bootstrap.min.js" type="text/javascript"></script>
     <link href="3rd/bootstrap.min.css" rel="stylesheet" type="text/css" charset="utf-8">
+
+    <script src="3rd/bootstrap-datepicker.js" type="text/javascript"></script>
+    <link href="3rd/bootstrap-datepicker.css" rel="stylesheet" type="text/css" charset="utf-8">
     
     <script src="3rd/underscore.js" type="text/javascript"></script>
     <script src="3rd/backbone.js" type="text/javascript"></script>
@@ -101,6 +104,7 @@
                   <li><strong>radioInput</strong>: INPUT[TYPE=RADIO]. Set <strong>options</strong> to specific input elements.</li>
                   <li><strong>spacer</strong>: An empty space.</li>
                   <li><strong>textarea</strong>: TEXTAREA.</li>
+                  <li><strong>datepicker</strong>: INPUT bound with a <a href="http://www.eyecon.ro/bootstrap-datepicker/?utm_source=twitterfeed&utm_medium=twitter" target="_blank">Bootstrap Datepicker</a>. Set <strong>options</strong> to pass datepicker options.</li>
                 </ul>
               </li>
               <li><strong>type</strong>: Optional. Input type. Defaults to <code>text</code>.</li>
@@ -295,6 +299,14 @@ Backbone.FormView.prototype.templates = {
     '  &lt;label class="control-label &lt;%=labelClassName%&gt;"&gt;&lt;%-label%&gt;&lt;/label&gt;',
     '  &lt;div class="controls &lt;%=controlsClassName%&gt;"&gt;',
     '    &lt;textarea class="input-&lt;%=inputSize%&gt; &lt;%=controlClassName%&gt;" name="&lt;%=name%&gt;" data-nested="&lt;%=nested%&gt;" placeholder="&lt;%-placeholder%&gt;"&gt;&lt;%-value%&gt;&lt;/textarea&gt;',
+    '  &lt;/div&gt;',
+    '&lt;/div&gt;'
+  ].join("\n")),
+  datepicker: _.template([
+    '&lt;div class="control-group &lt;%=className%&gt;"&gt;',
+    '  &lt;label class="control-label &lt;%=labelClassName%&gt;"&gt;&lt;%-label%&gt;&lt;/label&gt;',
+    '  &lt;div class="controls &lt;%=controlsClassName%&gt;"&gt;',
+    '    &lt;input type="&lt;%=type%&gt;" class="input-&lt;%=inputSize%&gt; datepicker &lt;%=controlClassName%&gt;" name="&lt;%=name%&gt;" data-nested="&lt;%=nested%&gt;" value="&lt;%-value%&gt;" placeholder="&lt;%-placeholder%&gt;" /&gt;',
     '  &lt;/div&gt;',
     '&lt;/div&gt;'
   ].join("\n"))

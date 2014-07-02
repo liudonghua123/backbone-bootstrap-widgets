@@ -19,7 +19,7 @@
       type: "text", // input type, defaults to text
       disabled: false, // Set to true to disable the control
       value: undefined, // Default value when model is empty. Optional.
-      options: undefined, // If control is select or radioInput, list of options as {label:<label>, value:<value>}
+      options: undefined, // If control is select or radioInput, list of options as {label:<label>, value:<value>}. If control is datepicker, datepicker options.
       labelClassName: "col-sm-4", // Control label class
       controlsClassName: "col-sm-8", // Form controls class,
       controlClassName: "" // Control (input) class
@@ -96,11 +96,21 @@
         '  </div>',
         '</div>'
       ].join("\n")),
+      datepicker: _.template([
+        '<div class="form-group <%=className%>">',
+        '  <label class="control-label <%=labelClassName%>"><%-label%></label>',
+        '  <div class="<%=controlsClassName%>">',
+        '    <input type="<%=type%>" class="form-control datepicker <%=controlClassName%>" name="<%=name%>" data-nested="<%=nested%>" value="<%-value%>" placeholder="<%-placeholder%>" />',
+        '  </div>',
+        '</div>'
+      ].join("\n"))
     },
     initialize: function(options) {
       Backbone.View.prototype.initialize.apply(this, arguments);
       _.defaults(this, options || {});
       if (options.field) _.extend(this.field, options.field);
+
+      _.bindAll(this, "onChange");
 
       // Ensure required 'options' was passed for select and radioInput controls
       _.each(this.schema, function(record) {
@@ -133,26 +143,37 @@
 
         if (record.disabled)
           record.$el.find("input, select, textarea").attr("disabled", "disabled");
+
+        if (record.control == "datepicker")
+          record.$el.find("input").datepicker(record.options || {})
       });
 
       // Transfer DOM changes to the model
-      this.$el.find("input, select, textarea").off("change").on("change", function(e) {
-        var $el = $(this),
-            name = $el.attr("name"),
-            nested = $el.attr("data-nested"),
-            value = $el.is("input[type=checkbox]") ? $el.is(":checked") : $el.val(),
-            changes = {};
+      this.$el.find("input, select, textarea")
+        .off("change")
+        .on("change", this.onChange);
 
-        if (_.isEmpty(nested)) {
-          changes[name] = value;
-        } else {
-          changes[name] = _.clone(model.get(name)) || {};
-          changes[name][nested] = value;
-        }
-        model.set(changes);
-      });
+      this.$el.find("input.datepicker")
+        .off("changeDate")
+        .on("changeDate", this.onChange);
 
       return this;
+    },
+    onChange: function(e) {
+      var model = this.model,
+          $el = $(e.target),
+          name = $el.attr("name"),
+          nested = $el.attr("data-nested"),
+          value = $el.is("input[type=checkbox]") ? $el.is(":checked") : $el.val(),
+          changes = {};
+
+      if (_.isEmpty(nested)) {
+        changes[name] = value;
+      } else {
+        changes[name] = _.clone(model.get(name)) || {};
+        changes[name][nested] = value;
+      }
+      model.set(changes);
     }
   });
 

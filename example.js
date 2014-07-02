@@ -15,6 +15,7 @@ $(document).ready(function() {
       postalCode: "H3K 1G6",
       province: "QC"
     },
+    dateOfBirth: "1990-10-10",
     lifeGoal: "To become the best basketball player there is. I want to dunk!"
   };
   var person = new Backbone.Model(person);
@@ -62,6 +63,7 @@ $(document).ready(function() {
         {label: "Yukon", value: "YT"}
       ]
     },
+    {name: "dateOfBirth", label: "Date of birth", control: "datepicker", options: {format: "yyyy-mm-dd"}},
     {name: "lifeGoal", label: "Life goal", control: "textarea"}]
   });
   form.render();
