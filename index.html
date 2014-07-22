@@ -77,15 +77,18 @@
           <p>
             The form markup is that of <a href="http://getbootstrap.com/css/#forms" target="_blank">Bootstrap form</a>.
             The form uses the horizontal layout (class <code>form-horizontal</code>).
-            Each model attribute is represented by a <code>control-group</code> DIV.
+            Each model attribute is represented by a <code>form-group</code> DIV (<code>control-group</code> in Bootstrap 2.3).
             Control types currently supported are text INPUT and SELECT.
           </p>
           <p>
-            In addition to Backbone View options, FormView takes these extra options:
+            FormView takes these options:
             <ul>
+              <li><strong>model</strong>: The model containing the form data, one per attribute.</li>
               <li><strong>schema</strong>: Schema defining which attributes to edit, and what controls to use. See below.</li>
               <li><strong>field</strong>: Optional. If set, will override default field options (see below).</li>
+              <li><strong>errorModel</strong>: Optional. If set, will be used to add inline error help blocks besides the erroneous form control.</li>
             </ul>
+            In addition, you can pass any other option supported by Backbone.View.
           </p>
           <p>
             Option <code>schema</code> defines which model attributes will be edited. The schema is a list of field objects.
@@ -111,7 +114,7 @@
               <li><strong>disabled</strong>: Optional. Set to true to disabled the input or select.</li>
               <li><strong>options</strong>: Optional. For controls <strong>select</strong> and <strong>radioInput</strong>, list of option objects in the form: <code>{label:&lt;label&gt;, value:&lt;value&gt;}</code>.</li>
               <li><strong>placeholder</strong>: Optional. Placeholder for an input control.</li>
-              <li><strong>className</strong>: Optional. Class to set on the <code>control-group</code> DIV.</li>
+              <li><strong>className</strong>: Optional. Class to set on the <code>form-group</code> DIV.</li>
               <li><strong>labelClassName</strong>: Optional. Class to control the width of labels. Defaults to <code>col-sm-4</code>.</li>
               <li><strong>controlsClassName</strong>: Optional. Class to control the width of form controls. Defaults to <code>col-sm-8</code>.</li>
               <li><strong>controlClassName</strong>: Optional. Class to add to the input or select element.</li>
@@ -224,6 +227,53 @@ updateObject();
       </div>
       <div class="row">
         <div class="col-md-12">
+          <h2>From Validation</h2>
+          <p>
+            Backbone.FormView accepts an optional <code>errorModel</code>. It contains the same attributes as the original <code>model</code> but with error messages as values. Backbone.FormView will automatically listen for changes on the <code>errorModel</code> to display the errors. You need only set the invalid attribute with an appropriate error message and for it to be displayed.
+          </p>
+          <p>
+            This is useful for back-end validation. In the case of an error, your back-end need only return a hash of attributes and their errors to be set on the <code>errorModel</code> to inform the user what to correct.
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <form id="form2" class="form-horizontal"></form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Code</h2>
+<pre>
+var model = new Backbone.Model({a: 101}),
+    errorModel = new Backbone.Model();
+
+var form2 = new Backbone.FormView({
+  el: "#form2",
+  model: model,
+  errorModel: errorModel,
+  schema: [{name: "a", label: "Choose a number between 10 and 20. Press Enter to submit the form.", control: "input"}]
+});
+form2.render()
+
+$("#form2").on("submit", function(e) {
+  e.preventDefault();
+
+  errorModel.clear();
+
+  var number = parseFloat(model.get("a"), 10);
+  if (isNaN(number))
+    errorModel.set({a: "Not a number!"});
+  else if (number &lt;= 10 || number &gt;= 20)
+    errorModel.set({a: "Must be between 10 and 20"})
+
+  return false;
+});
+</pre>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
           <h2>Bootstrap 2.3</h2>
           <p>
             Backbone FormView is built for Bootstrap 3.
@@ -312,6 +362,9 @@ Backbone.FormView.prototype.templates = {
   ].join("\n"))
 };
 Backbone.FormView.prototype.field.inputSize = "xlarge";
+Backbone.FormView.prototype.groupClassName = "control-group";
+Backbone.FormView.prototype.errorClassName = "error";
+Backbone.FormView.prototype.helpClassName = "help-inline";
 </pre>
         </div>
       </div>

@@ -25,8 +25,12 @@
       controlClassName: "" // Control (input) class
     },
     schema: undefined,
+    errorModel: undefined,
     tagName: "form",
     className: "form-horizontal",
+    groupClassName: "form-group",
+    errorClassName: "has-error",
+    helpClassName: "help-block",
     templates: {
       input: _.template([
         '<div class="form-group <%=className%>">',
@@ -117,6 +121,9 @@
         if ((record.control == 'select' || record.control == 'radioInput') && !record.options)
           throw new Error("Missing options for control " + record.control);
       });
+
+      if (this.errorModel instanceof Backbone.Model)
+        this.listenTo(this.errorModel, "change sync", this.updateInvalid);
     },
     render: function() {
       var view = this,
@@ -145,7 +152,7 @@
           record.$el.find("input, select, textarea").attr("disabled", "disabled");
 
         if (record.control == "datepicker")
-          record.$el.find("input").datepicker(record.options || {})
+          record.$el.find("input").datepicker(record.options || {});
       });
 
       // Transfer DOM changes to the model
@@ -157,6 +164,7 @@
         .off("changeDate")
         .on("changeDate", this.onChange);
 
+      this.updateInvalid();
       return this;
     },
     onChange: function(e) {
@@ -174,6 +182,45 @@
         changes[name][nested] = value;
       }
       model.set(changes);
+    },
+    updateInvalid: function() {
+      if (!(this.errorModel instanceof Backbone.Model)) return this;
+
+      var errors = this.errorModel.attributes,
+          $form = this.$el,
+          validKeys = _.map(this.schema, function(field) {
+            return field.name + (field.nested ? ("."+field.nested) : "");
+          }),
+          groupClassName = this.groupClassName,
+          errorClassName = this.errorClassName,
+          helpClassName = this.helpClassName;
+      
+      $form.find("."+groupClassName).removeClass(errorClassName)
+        .find("."+helpClassName+".error").remove();
+
+      if (!errors) return this;
+
+      _.each(errors, function (error, key) {
+        if (!_.isString(key) || _.indexOf(validKeys, key) == -1 || _.isEmpty(error)) return;
+        var pieces = key.split("."),
+            name = pieces[0],
+            nested = pieces[1],
+            selector = "[name=" + name + "]";
+        if (!_.isEmpty(nested)) selector += "[data-nested=" + nested + "]";
+
+        var $el = $form.find(selector);
+        if (!$el.length) return true;
+
+        $el.closest("."+groupClassName).addClass(errorClassName)
+        $el.after('<span class="'+helpClassName+' error">' + error + '</span>');
+
+        $el.one("focus", function() {
+          $(this).closest("."+groupClassName).removeClass(errorClassName)
+            .find("."+helpClassName+".error").remove();
+        });
+      });
+
+      return this;
     }
   });
 

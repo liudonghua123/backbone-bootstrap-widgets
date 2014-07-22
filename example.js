@@ -75,6 +75,32 @@ $(document).ready(function() {
   updateObject();
 
 
+  // Backbone.FormView Error Validation Example
+  var model = new Backbone.Model({a: 101}),
+      errorModel = new Backbone.Model();
+  
+  var form2 = new Backbone.FormView({
+    el: "#form2",
+    model: model,
+    errorModel: errorModel,
+    schema: [{name: "a", label: "Choose a number between 10 and 20. Press Enter to submit the form.", control: "input"}]
+  });
+  form2.render()
+
+  $("#form2").on("submit", function(e) {
+    e.preventDefault();
+
+    errorModel.clear();
+
+    var number = parseFloat(model.get("a"), 10);
+    if (isNaN(number))
+      errorModel.set({a: "Not a number!"});
+    else if (number <= 10 || number >= 20)
+      errorModel.set({a: "Must be between 10 and 20"})
+
+    return false;
+  });
+
 
   // Backbone.ModalView Example 1
   // Basic modal dialog
