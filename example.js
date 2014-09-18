@@ -1,5 +1,93 @@
 $(document).ready(function() {
 
+  // Basic modal dialog
+  $("#btn-1").click(function(e) {
+    var modal = new Backbone.ModalView({
+      body: "Hello World!"
+    });
+    modal.render();
+  });
+
+  // Modal with postRender
+  $("#btn-2").click(function(e) {
+    new Backbone.ModalView({
+      postRender: function() {
+        this.$body.append("<h1>Hello World!</h1>");
+      }
+    }).render();
+  });
+
+  // Modal dialog with custom buttons, events and postRender function
+  var MyModal = Backbone.ModalView.extend({
+    title: "<h3>Modal with custom buttons</h3>",
+    buttons: [{
+      className: "btn-primary ok",
+      label: "Ok"
+    }, {
+      className: "btn-default cancel",
+      label: "Cancel",
+      close: true
+    }],
+    events: {
+      "click .modal-footer a.ok": "onOk",
+      "click .modal-footer a.cancel": "onCancel",
+      "hidden.bs.modal": "onHidden"
+    },
+    postRender: function() {
+      var $h4 = $("<h4>").text("Events"),
+          $p = $("<p>").text("Use Backbone.View <code>events</code> to bind buttons. Click on the buttons and look at the console.")
+      this.$body.append($h4).append($p);
+      return this;
+    },
+    onOk: function(e) {
+      e.preventDefault();
+      console.log("Ok clicked");
+    },
+    onCancel: function(e) {
+      console.log("Cancel clicked");
+    },
+    onHidden: function(e) {
+      console.log("Modal hidden");
+    }
+  });
+  $("#btn-3").click(function(e) {
+    new MyModal().render();
+  });
+
+  $("#btn-4").click(function(e) {
+    var modal = new Backbone.ModalView({
+      title: "<h3>Static backdrop</h3>",
+      body: "You can't close the modal on clicking on the backdrop",
+      backdrop: 'static'
+    });
+    modal.render();
+  });
+
+  // Backbone.ShiftableCollection Example
+  var ImageGallery = Backbone.ShiftableCollectionView.extend({
+    template: _.template([
+      '<div class="col-md-2 shiftable-collection-item">',
+      '  <img src="<%=image%>" alt="<%=name%>" />',
+      '  <br/>',
+      '  <span><%=name%></span>',
+      '  <a href="#" class="action delete">&times;</a>',
+      '  <a href="#" class="action move-left">&#8592;</a>',
+      '  <a href="#" class="action move-right">&#8594;</a>',
+      '</div>'
+    ].join("\n"))
+  });
+  var images = new Backbone.Collection([
+    {name: "Mario", image: "img/mario.png"},
+    {name: "Luigi", image: "img/luigi.png"},
+    {name: "Princess", image: "img/princess.png"},
+    {name: "Yoshi", image: "img/yoshi.png"}
+  ]);
+  var imageGallery = new ImageGallery({
+    collection: images,
+    el: $("#shiftable-collection-example")
+  }).render();
+
+
   // BackBone.FormView Example
   // Person with nested address
   var person = {
@@ -100,86 +188,5 @@ $(document).ready(function() {
 
     return false;
   });
-
-
-  // Backbone.ModalView Example 1
-  // Basic modal dialog
-  $("#btn-1").click(function(e) {
-    var modal = new Backbone.ModalView({
-      body: "Hello World!"
-    });
-    modal.render();
-  });
-
-  // Backbone.ModalView Example 2
-  // Modal dialog with custom buttons, events and postRender function
-  var MyModal = Backbone.ModalView.extend({
-    title: "<h3>Modal with custom buttons</h3>",
-    buttons: [{
-      className: "btn-primary ok",
-      label: "Ok"
-    }, {
-      className: "btn-default cancel",
-      label: "Cancel",
-      close: true
-    }],
-    events: {
-      "click .modal-footer a.ok": "onOk",
-      "click .modal-footer a.cancel": "onCancel",
-      "hidden.bs.modal": "onHidden"
-    },
-    postRender: function() {
-      var $h4 = $("<h4>").text("Events"),
-          $p = $("<p>").text("Use Backbone.View <code>events</code> to bind buttons. Click on the buttons and look at the console.")
-      this.$body.append($h4).append($p);
-      return this;
-    },
-    onOk: function(e) {
-      e.preventDefault();
-      console.log("Ok clicked");
-    },
-    onCancel: function(e) {
-      console.log("Cancel clicked");
-    },
-    onHidden: function(e) {
-      console.log("Modal hidden");
-    }
-  });
-  $("#btn-2").click(function(e) {
-    new MyModal().render();
-  });
-
-  $("#btn-3").click(function(e) {
-    var modal = new Backbone.ModalView({
-      title: "<h3>Static backdrop</h3>",
-      body: "You can't close the modal on clicking on the backdrop",
-      backdrop: 'static'
-    });
-    modal.render();
-  });
-
-  // Backbone.ShiftableCollection Example
-  var ImageGallery = Backbone.ShiftableCollectionView.extend({
-    template: _.template([
-      '<div class="col-md-2 shiftable-collection-item">',
-      '  <img src="<%=image%>" alt="<%=name%>" />',
-      '  <br/>',
-      '  <span><%=name%></span>',
-      '  <a href="#" class="action delete">&times;</a>',
-      '  <a href="#" class="action move-left">&#8592;</a>',
-      '  <a href="#" class="action move-right">&#8594;</a>',
-      '</div>'
-    ].join("\n"))
-  });
-  var images = new Backbone.Collection([
-    {name: "Mario", image: "img/mario.png"},
-    {name: "Luigi", image: "img/luigi.png"},
-    {name: "Princess", image: "img/princess.png"},
-    {name: "Yoshi", image: "img/yoshi.png"}
-  ]);
-  var imageGallery = new ImageGallery({
-    collection: images,
-    el: $("#shiftable-collection-example")
-  }).render();
 
 });

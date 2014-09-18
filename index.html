@@ -104,9 +104,11 @@ events: {
           <h2>Examples</h2>
           <button id="btn-1" class="btn btn-primary">Basic modal dialog</button>
           &nbsp;
-          <button id="btn-2" class="btn btn-primary">Subclassed modal dialog</button>
+          <button id="btn-2" class="btn btn-primary">Modal with postRender</button>
           &nbsp;
-          <button id="btn-3" class="btn btn-primary">Static backdrop</button>
+          <button id="btn-3" class="btn btn-primary">Subclassed modal dialog</button>
+          &nbsp;
+          <button id="btn-4" class="btn btn-primary">Static backdrop</button>
         </div>
       </div>
       <div class="row">
@@ -119,6 +121,15 @@ $("#btn-1").click(function(e) {
     body: "Hello World!"
   });
   modal.render();
+});
+
+// Modal with postRender
+$("#btn-2").click(function(e) {
+  new Backbone.ModalView({
+    postRender: function() {
+      this.$body.append("&lt;h1&gt;Hello World!&lt;/h1&gt;");
+    }
+  }).render();
 });
 
 // Modal dialog with custom buttons, events and postRender function
@@ -154,13 +165,13 @@ var MyModal = Backbone.ModalView.extend({
     console.log("Modal hidden");
   }
 });
-$("#btn-2").click(function(e) {
+$("#btn-3").click(function(e) {
   new MyModal().render();
 });
 
 // Modal with static backdrop
 // Work with Bootstrap 2.3 and 3
-$("#btn-3").click(function(e) {
+$("#btn-4").click(function(e) {
   var modal = new Backbone.ModalView({
     title: "Static backdrop",
     body: "Hello World!",
