@@ -39,7 +39,10 @@
         href: "#",
         label: "Close",
         close: true
-      }]
+      }],
+      postRender: function() {
+        return this;
+      }
     },
     initialize: function(options) {
       options || (options = {});
@@ -78,9 +81,6 @@
       
       this.postRender();
 
-      return this;
-    },
-    postRender: function() {
       return this;
     },
     close: function(e) {
