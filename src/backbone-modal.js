@@ -50,13 +50,15 @@
       _.extend(this, _.pick(options, _.keys(this.defaults)));
       _.bindAll(this, "close");
     },
-    render: function() {
+    render: function(params) {
+      params || (params = {});
       var view = this;
 
       this.$el.html(this.template({
-        title: this.title,
-        body: this.body
+        title: _.template(this.title)(params),
+        body: _.template(this.body)(params)
       }));
+
       this.$header = this.$el.find('.modal-header');
       this.$body = this.$el.find('.modal-body');
       this.$footer = this.$el.find('.modal-footer');
@@ -78,13 +80,13 @@
       if(this.backdrop === true) {
         $('.modal-backdrop').off().click(view.close);
       }
-      
+
       this.postRender();
 
       return this;
     },
     close: function(e) {
-      if (e) e.preventDefault();
+      if (e.preventDefault) e.preventDefault();
       var view = this;
       this.trigger("close", this);
       setTimeout(function() {
