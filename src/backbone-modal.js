@@ -50,13 +50,14 @@
       _.extend(this, _.pick(options, _.keys(this.defaults)));
       _.bindAll(this, "close");
     },
-    render: function(params) {
-      params || (params = {});
+    render: function() {
+      var data = this.model ? this.model.toJSON() : {};
+
       var view = this;
 
       this.$el.html(this.template({
-        title: _.template(this.title)(params),
-        body: _.template(this.body)(params)
+        title: _.template(this.title)(data),
+        body: _.template(this.body)(data)
       }));
 
       this.$header = this.$el.find('.modal-header');
@@ -86,7 +87,7 @@
       return this;
     },
     close: function(e) {
-      if (e.preventDefault) e.preventDefault();
+      if (e) e.preventDefault();
       var view = this;
       this.trigger("close", this);
       setTimeout(function() {
