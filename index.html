@@ -5,17 +5,17 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-    
+
     <script src="3rd/jquery.min.js" type="text/javascript"></script>
     <script src="3rd/bootstrap.min.js" type="text/javascript"></script>
     <link href="3rd/bootstrap.min.css" rel="stylesheet" type="text/css" charset="utf-8">
 
     <script src="3rd/bootstrap-datepicker.js" type="text/javascript"></script>
     <link href="3rd/bootstrap-datepicker.css" rel="stylesheet" type="text/css" charset="utf-8">
-    
+
     <script src="3rd/underscore.js" type="text/javascript"></script>
     <script src="3rd/backbone.js" type="text/javascript"></script>
-    
+
     <script src="src/backbone-form.js" type="text/javascript"></script>
     <script src="src/backbone-modal.js" type="text/javascript"></script>
 
@@ -23,7 +23,7 @@
     <link href="src/backbone-shiftable-collection.css" rel="stylesheet" type="text/css" charset="utf-8">
 
     <script src="example.js" type="text/javascript"></script>
-    
+
     <style>
       header.navbar-inverse {border-radius: 0;}
       footer.navbar-default {border-radius: 0; margin-bottom: 0;}
@@ -84,8 +84,9 @@ events: {
           </p>
           <p>Backbone ModalView supports these options:</p>
           <ul>
-            <li><strong>title</strong>: Optional. HTML to put in the modal header. Defaults to &lt;h3&gt;Info&lt;/h3&gt;.</li>
-            <li><strong>body</strong>: Optional. HTML to put im the modal body. Defaults to an empty string.</li>
+            <li><strong>title</strong>: Optional. Underscore template or plain HTML string to put in the modal header. Defaults to &lt;h3&gt;Info&lt;/h3&gt;.</li>
+            <li><strong>body</strong>: Optional. Underscore template or plain HTML string to put in the modal body. Defaults to an empty string.</li>
+            <li><strong>model</strong>: Optional. Backbone.Model to be passed to the title and body templates. By default it is undefined.</li>
             <li>
               <strong>buttons</strong>: Optional. List of buttons to show. Defaults to a Close button. A button is an anchor tag with Bootstrap class btn. Each button has these options:
               <ul>
@@ -109,6 +110,8 @@ events: {
           <button id="btn-3" class="btn btn-primary">Subclassed modal dialog</button>
           &nbsp;
           <button id="btn-4" class="btn btn-primary">Static backdrop</button>
+          &nbsp;
+          <button id="btn-5" class="btn btn-primary">Body and Title as templates</button>
         </div>
       </div>
       <div class="row">
@@ -176,6 +179,15 @@ $("#btn-4").click(function(e) {
     title: "Static backdrop",
     body: "Hello World!",
     backdrop: 'static'
+  });
+  modal.render();
+});
+
+$("#btn-5").click(function(e) {
+  var modal = new Backbone.ModalView({
+    model: new Backbone.Model({title: "Hello", name: "Example"}),
+    title: "&lt;h3&gt;&lt;%=title%&gt;&lt;/h3&gt;",
+    body: "Hello, &lt;%=name%&gt;!",
   });
   modal.render();
 });

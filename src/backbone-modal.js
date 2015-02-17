@@ -51,12 +51,15 @@
       _.bindAll(this, "close");
     },
     render: function() {
+      var data = this.model ? this.model.toJSON() : {};
+
       var view = this;
 
       this.$el.html(this.template({
-        title: this.title,
-        body: this.body
+        title: _.template(this.title)(data),
+        body: _.template(this.body)(data)
       }));
+
       this.$header = this.$el.find('.modal-header');
       this.$body = this.$el.find('.modal-body');
       this.$footer = this.$el.find('.modal-footer');
@@ -78,7 +81,7 @@
       if(this.backdrop === true) {
         $('.modal-backdrop').off().click(view.close);
       }
-      
+
       this.postRender();
 
       return this;

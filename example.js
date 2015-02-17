@@ -63,6 +63,15 @@ $(document).ready(function() {
     modal.render();
   });
 
+  $("#btn-5").click(function(e) {
+    var modal = new Backbone.ModalView({
+      model: new Backbone.Model({title: "Hello", name: "Example"}),
+      title: "<h3><%=title%></h3>",
+      body: "Hello, <%=name%>!",
+    });
+    modal.render();
+  });
+
   // Backbone.ShiftableCollection Example
   var ImageGallery = Backbone.ShiftableCollectionView.extend({
     template: _.template([
