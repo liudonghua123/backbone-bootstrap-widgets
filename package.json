@@ -2,6 +2,10 @@
 	"name": "backbone-bootstrap-widgets",
 	"description": "Series of widgets implemented as Backbone Views wrapping Bootstrap plugins.",
 	"author": "Martin Drapeau and contributors <martindrapeau@gmail.com>",
+  	"contributors": [
+	  {"name": "Nedyalko Dyakov",  "email": "me@ndyakov.eu"},
+	  {"name": "Allan Bettarel",   "email": "allan.bettarel@gmail.com"}
+	],
 	"homepage": "http://amiliaapp.github.io/backbone-bootstrap-widgets/",
 	"bugs": {
 		"url": "https://github.com/amiliaapp/backbone-bootstrap-widgets/issues"
